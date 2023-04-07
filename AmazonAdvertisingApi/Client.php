@@ -429,12 +429,12 @@ class Client
      */
     protected function getCampaignTypeFromData(?array $data): string
     {
-        if (empty($data)) {
-            return static::CAMPAIGN_TYPE_SPONSORED_PRODUCTS;
-        }
-        $campaignType = is_array($data) && isset($data['campaignType'])
-            ? $data['campaignType']
-            : static::CAMPAIGN_TYPE_SPONSORED_PRODUCTS;
+        $campaignType =
+            (empty($data))
+            ? static::CAMPAIGN_TYPE_SPONSORED_PRODUCTS
+            : ((is_array($data) && isset($data['campaignType']))
+                ? $data['campaignType']
+                : static::CAMPAIGN_TYPE_SPONSORED_PRODUCTS);
         if ($campaignType === static::CAMPAIGN_TYPE_SPONSORED_PRODUCTS) {
             return 'sp';
         } elseif ($campaignType === static::CAMPAIGN_TYPE_SPONSORED_BRANDS) {
