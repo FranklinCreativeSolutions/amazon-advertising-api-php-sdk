@@ -227,23 +227,28 @@ class Client
      * @param string $interface
      * @param array|null $params
      * @param string $method
+     * @param array $httpHeaders
      * @return array
      * @throws Exception
      */
-    private function operation(string $interface, ?array $params = [], string $method = "GET")
+    private function operation(string $interface, ?array $params = [], string $method = "GET", array $httpHeaders = [])
     {
-        $headers = array(
-            "Authorization: bearer {$this->config["accessToken"]}",
-            "Content-Type: application/json",
-            "User-Agent: {$this->userAgent}",
-            "Amazon-Advertising-API-ClientId: {$this->config["clientId"]}"
-        );
+        $headers = [
+            'Authorization' => "bearer {$this->config["accessToken"]}",
+            'Content-Type' => 'application/json',
+            'User-Agent' => $this->userAgent,
+            'Amazon-Advertising-API-ClientId' => $this->config["clientId"],
+        ];
 
         if (!is_null($this->profileId)) {
-            array_push($headers, "Amazon-Advertising-API-Scope: {$this->profileId}");
+            $headers['Amazon-Advertising-API-Scope'] = $this->profileId;
         }
 
-        $this->headers = $headers;
+        $mergedHeaders = array_merge($headers, $httpHeaders);
+        $this->headers = [];
+        foreach ($mergedHeaders as $header => $headerValue) {
+            $this->headers[] = "{$header}: {$headerValue}";
+        }
 
         $request = new CurlRequest();
         $this->endpoint = trim($this->endpoint, "/");
@@ -274,7 +279,7 @@ class Client
         }
 
         $request->setOption(CURLOPT_URL, $url);
-        $request->setOption(CURLOPT_HTTPHEADER, $headers);
+        $request->setOption(CURLOPT_HTTPHEADER, $this->headers);
         $request->setOption(CURLOPT_USERAGENT, $this->userAgent);
         $request->setOption(CURLOPT_CUSTOMREQUEST, strtoupper($method));
         return $this->executeRequest($request);
