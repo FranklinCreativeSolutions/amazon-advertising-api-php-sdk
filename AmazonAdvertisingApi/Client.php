@@ -134,8 +134,12 @@ class Client
         if (is_array($response_array) && array_key_exists("access_token", $response_array)) {
             $this->config["accessToken"] = $response_array["access_token"];
         } else {
-            $this->logAndThrow("Unable to refresh token. 'access_token' not found in response. " . print_r($response,
-                    true));
+            $this->logAndThrow(
+                "Unable to refresh token. 'access_token' not found in response. " . print_r(
+                    $response,
+                    true
+                )
+            );
         }
 
         return $response;
@@ -440,11 +444,11 @@ class Client
             : ((is_array($data) && isset($data['campaignType']))
                 ? $data['campaignType']
                 : static::CAMPAIGN_TYPE_SPONSORED_PRODUCTS);
-        if ($campaignType === static::CAMPAIGN_TYPE_SPONSORED_PRODUCTS) {
+        if (($campaignType === static::CAMPAIGN_TYPE_SPONSORED_PRODUCTS) || ($campaignType === 'sp')) {
             return 'sp';
-        } elseif ($campaignType === static::CAMPAIGN_TYPE_SPONSORED_BRANDS) {
+        } elseif (($campaignType === static::CAMPAIGN_TYPE_SPONSORED_BRANDS) || ($campaignType === 'hsa')) {
             return 'hsa';
-        } elseif ($campaignType === static::CAMPAIGN_TYPE_SPONSORED_DISPLAY) {
+        } elseif (($campaignType === static::CAMPAIGN_TYPE_SPONSORED_DISPLAY) || ($campaignType === 'sd')) {
             return 'sd';
         } else {
             return 'sp';
