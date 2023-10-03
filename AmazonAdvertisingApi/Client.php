@@ -256,7 +256,11 @@ class Client
 
         $request = new CurlRequest();
         $this->endpoint = trim($this->endpoint, "/");
+        if (str_starts_with($interface, 'reporting/reports') && (str_ends_with($this->endpoint, '/' . $this->apiVersion))) {
+            $this->endpoint = substr($this->endpoint, 0, strlen($this->endpoint) - strlen('/' . $this->apiVersion));
+        }
         $url = "{$this->endpoint}/{$interface}";
+
         $this->requestId = null;
 
         switch (strtolower($method)) {
@@ -286,6 +290,7 @@ class Client
         $request->setOption(CURLOPT_HTTPHEADER, $this->headers);
         $request->setOption(CURLOPT_USERAGENT, $this->userAgent);
         $request->setOption(CURLOPT_CUSTOMREQUEST, strtoupper($method));
+
         return $this->executeRequest($request);
     }
 

@@ -1088,7 +1088,10 @@ trait SponsoredProductsRequests
         if (!$type && $this->apiVersion == 'v2') {
             $this->logAndThrow("Unable to perform request. No type is set");
         }
-        return $this->operation($type . "{$recordType}/report", $data, "POST");
+
+        $data['name'] = $recordType . ' ' . $data['startDate'] . ':' . $data['endDate'];
+
+        return $this->operation('reporting/reports', $data, "POST", ['Content-Type' => 'application/vnd.createasyncreportrequest.v3+json']);
     }
 
     /**
@@ -1119,7 +1122,7 @@ trait SponsoredProductsRequests
      */
     public function getReport($reportId)
     {
-        $req = $this->operation("reports/{$reportId}");
+        $req = $this->operation('reporting/reports/' . $reportId);
         if ($req["success"]) {
             $json = json_decode($req["response"], true);
             if ($json["status"] == "SUCCESS") {
